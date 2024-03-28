@@ -1,0 +1,11 @@
+#pts {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 1;
+  margin: 10;
+}
+
+canvas {
+  display: block;
+}
