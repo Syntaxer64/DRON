@@ -1,1 +1,1 @@
-Projekt gry przygotowywany przez grupę magistrantów na zajęcia z Zaawansowanych Technik Programowania.
+Flappy Bird, który stworzyłem na zajęciach.
