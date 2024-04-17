@@ -1,62 +1,62 @@
-let topObstacles = [];
-let bottomObstacles = [];
-let minInterval = 50;
-let maxInterval = 200;
-let spawnCounterTop;
-let spawnThresholdTop;
-let spawnCounterBottom;
-let spawnThresholdBottom;
-let dron;
+let topObstacles = []; //lista przeszkód na górze
+let bottomObstacles = []; //lista przeszkód na dole
+let minInterval = 50; //minimalny interwał generowanie się przeszkód
+let maxInterval = 200; //maksymalny interwał generowania się przeszkód
+let spawnCounterTop; //licznik czasowy do wygenerowania przeszkody na górze
+let spawnThresholdTop; //próg czasowy do wygenerowania przeszkody na górze
+let spawnCounterBottom; //to samo, ale na dole
+let spawnThresholdBottom; //to samo, ale na dole
+let dron; //zmienna dla wygenerowania drona
 
 function setup() {
-  createCanvas(1000, 600);
+  createCanvas(1000, 600); //płótno
   dron = new Dron();
-  spawnCounterTop = 0;
-  spawnThresholdTop = random(minInterval, maxInterval);
-  spawnCounterBottom = 0;
-  spawnThresholdBottom = random(minInterval, maxInterval);
+  spawnCounterTop = 0; //wyzerowanie licznika górnego
+  spawnThresholdTop = random(minInterval, maxInterval); //wylosowanie progu górnego
+  spawnCounterBottom = 0; //wygenerowanie licznika dolnego
+  spawnThresholdBottom = random(minInterval, maxInterval); //wylosowanie progu dolnego
 }
 
 function draw() {
-  background(143, 233, 255);
+  background(143, 233, 255); //narysowanie tła
   dron.update();
-  dron.draw();
+  dron.draw(); //narysowanie drona
 
   spawnCounterTop++;
-  spawnCounterBottom++;
-  if (spawnCounterTop >= spawnThresholdTop) {
-    let obstacleheight = random(height / 4, height / 2);
-    topObstacles.push(new Przeszkoda(width, obstacleheight, true));
-    spawnCounterTop = 0;
-    spawnThresholdTop = random(minInterval, maxInterval);
+  spawnCounterBottom++; //zwiększenie licznikó o 1
+  if (spawnCounterTop >= spawnThresholdTop) { //jeżeli licznik dojdzie do progu
+    let obstacleheight = random(height / 4, height / 2); //wysokość przeszkody zawierająca się między 1/4 a 1/2 wysokości płótna
+    topObstacles.push(new Przeszkoda(width, obstacleheight, true)); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na górze
+    spawnCounterTop = 0; //wyzerowanie licznika
+    spawnThresholdTop = random(minInterval, maxInterval); //wylosowanie nowego progu
   }
-  for (let i = topObstacles.length - 1; i >= 0; i--) {
+  for (let i = topObstacles.length - 1; i >= 0; i--) { //dla każdego obiektu w liście topObstacles (w kolejności malejącej)
     topObstacles[i].update();
-    topObstacles[i].draw();
-    if (topObstacles[i].offscreen()) {
-      topObstacles.splice(i, 1);
+    topObstacles[i].draw(); //narysuj przeszkodę
+    if (topObstacles[i].offscreen()) { //jeżeli przeszkoda wyjdzie poza ekran
+      topObstacles.splice(i, 1); //usuń 1 element (przeszkodę) z indeksu i
     }
   }
 
-  if (spawnCounterBottom >= spawnThresholdBottom) {
-    let obstacleheight = random(height / 4, height / 2);
-    bottomObstacles.push(new Przeszkoda(width, obstacleheight, false));
-    spawnCounterBottom = 0;
-    spawnThresholdBottom = random(minInterval, maxInterval);
+  if (spawnCounterBottom >= spawnThresholdBottom) { //jeżeli licznik dojdzie do progu
+    let obstacleheight = random(height / 4, height / 2); //wysokość przeszkody zawierająca się między 1/4 a 1/2 wysokości płótna
+    bottomObstacles.push(new Przeszkoda(width, obstacleheight, false)); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na dole
+    spawnCounterBottom = 0; //wyzerowanie licznika
+    spawnThresholdBottom = random(minInterval, maxInterval); //wylosowanie nowego progu
   }
-  for (let i = bottomObstacles.length - 1; i >= 0; i--) {
+  for (let i = bottomObstacles.length - 1; i >= 0; i--) { //dla każdego obiektu w liście topObstacles (w kolejności malejącej)
     bottomObstacles[i].update();
-    bottomObstacles[i].draw();
-    if (bottomObstacles[i].offscreen()) {
-      bottomObstacles.splice(i, 1);
+    bottomObstacles[i].draw(); //narysuj przeszkodę
+    if (bottomObstacles[i].offscreen()) { //jeżeli przeszkoda wyjdzie poza ekran
+      bottomObstacles.splice(i, 1); //usuń 1 element (przeszkodę) z indeksu i
     }
   }
 }
 
-function keyPressed() {
-  dron.fly();
+function keyPressed() { //funkcja sprawdzająca, czy przycisk został naciśnięty
+  dron.fly(); //funkcja lotu drona
 }
 
-function keyReleased() {
-  dron.fall();
+function keyReleased() { //funkcja sprawdzająca, czy przycisk został puszczony
+  dron.fall(); //funkcja spadku drona
 }
