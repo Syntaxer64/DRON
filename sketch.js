@@ -12,13 +12,15 @@ let startTime; //czas rozpoczęcia gry
 let gameStart = false; //zmienna sprawdzająca, czy gra się rozpoczęła
 let tlo; //zmienna dla wygenerowania tła
 let backgroundImage; //zmienna, w której znajduje się tło
+let koniecGry; //zmienna dla wygenerowanie okna końca gry
+let endTime; //czas po zakończeniu gry
 
 function preload() {
-  backgroundImage=loadImage("Tla_bmp\\las_jasny.bmp"); //wczytanie tła z pliku
+  backgroundImage=loadImage("Tla_bmp//las_ciemny.bmp"); //wczytanie tła z pliku
 }
 
 function setup() {
-  createCanvas(1174, 705); //płótno
+  createCanvas(1180, 710); //płótno
   dron = new Dron();
   spawnCounterTop = 0; //wyzerowanie licznika górnego
   spawnThresholdTop = random(minInterval, maxInterval); //wylosowanie progu górnego
@@ -30,9 +32,6 @@ function setup() {
 function draw() {
   tlo.update();
   tlo.draw(); //narysowanie tła
-  if (crash) {
-    noLoop(); //jeżeli dron się rozbije, przerwij grę
-  }
   dron.draw(); //narysowanie drona
   if (gameStart) {
       dron.update();
@@ -41,7 +40,7 @@ function draw() {
     spawnCounterTop++;
     spawnCounterBottom++; //zwiększenie licznikó o 1
     if (spawnCounterTop >= spawnThresholdTop) { //jeżeli licznik dojdzie do progu
-      let obstacleheight = random(height / 4, height / 2); //wysokość przeszkody zawierająca się między 1/4 a 1/2 wysokości płótna
+      let obstacleheight = random(height / 4, height / 3); //wysokość przeszkody zawierająca się między 1/4 a 1/2 wysokości płótna
       topObstacles.push(new Przeszkoda(width, obstacleheight, true)); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na górze
       spawnCounterTop = 0; //wyzerowanie licznika
       spawnThresholdTop = random(minInterval, maxInterval); //wylosowanie nowego progu
@@ -55,7 +54,7 @@ function draw() {
     }
   
     if (spawnCounterBottom >= spawnThresholdBottom) { //jeżeli licznik dojdzie do progu
-      let obstacleheight = random(height / 4, height / 2); //wysokość przeszkody zawierająca się między 1/4 a 1/2 wysokości płótna
+      let obstacleheight = random(height / 4, height / 3); //wysokość przeszkody zawierająca się między 1/4 a 1/2 wysokości płótna
       bottomObstacles.push(new Przeszkoda(width, obstacleheight, false)); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na dole
       spawnCounterBottom = 0; //wyzerowanie licznika
       spawnThresholdBottom = random(minInterval, maxInterval); //wylosowanie nowego progu
@@ -68,15 +67,35 @@ function draw() {
       }
     }
     drawTimer(); //narysowanie licznika czasu
+    if (crash) {
+      noLoop(); //jeżeli dron się rozbije, przerwij grę
+      dron.startSound.pause(); //przerwij muzykę
+      endTime = millis(); //sprawdź czas podczas rozbicia
+      koniecGry = new KoniecGry(endTime); //stwórz okno końca gry z czasem rozbicia
+      koniecGry.draw(); //narysuj okno końca gry
+    }
   }
 }
 
 function keyPressed() { //funkcja sprawdzająca, czy przycisk został naciśnięty
-  if (!gameStart) { //jeżeli gra się jeszcze nie rozpoczęła
+  if (crash) { //jeżeli dron się rozbił
+    topObstacles = []; //wyczyść listę górnych przeszkód
+    bottomObstacles = []; //wyczyść listę dolnych przeszkód
+    spawnCounterTop = 0; //wyzeruj liczniki
+    spawnThresholdTop = random(minInterval, maxInterval); //stwórz nowe progi
+    spawnCounterBottom = 0; //wyzeruj liczniki
+    spawnThresholdBottom = random(minInterval, maxInterval); //stwórz nowe progi
+    dron = new Dron(); //stwórz nowy obiekt dron
+    crash = false; //ustaw stan rozbicia się drona na false
+    gameStart = false; //ustaw stan rozpoczęcia gry na false
+    loop(); // Zrestartuj funkcję draw()
+  } else {
+      if (!gameStart) { //jeżeli gra się jeszcze nie rozpoczęła
     gameStart = true; //ustaw zmienną gameStart na true
     startTime = millis(); //ustaw czas startowy
   }
   dron.fly(); //funkcja lotu drona
+  }
 }
 
 function keyReleased() { //funkcja sprawdzająca, czy przycisk został puszczony
@@ -84,7 +103,7 @@ function keyReleased() { //funkcja sprawdzająca, czy przycisk został puszczony
 }
 
 function collision() { //funkcja sprawdzająca kolizję
-  if (dron.droneCollision(topObstacles, bottomObstacles)) { //jeżeli dron koliduję z jakąkolwiek przeszkodą z obu list
+  if (dron.droneCollision(topObstacles, bottomObstacles) || dron.collideWithGround()) { //jeżeli dron koliduję z jakąkolwiek przeszkodą z obu list lub z ziemią
     crash = true; //dron się rozbił
   }
 }
