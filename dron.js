@@ -1,9 +1,9 @@
 class Dron {
-  r = 50; //promień okręgu (drona)
-  pos = createVector(width / 2, height / 2); //pozycja drona na płótnie (canvas)
-  vel = createVector(0, 0.5); //prędkość grawitacji drona
-  acc = createVector(0, 0.15); //przyspieszenie grawitacyjne drona
-  opor = createVector(0, 1.5); //opór drona
+  r = 40; //promień okręgu (drona)
+  pos = createVector(width / 6, height / 2); //pozycja drona na płótnie (canvas)
+  vel = createVector(0, 1.5); //prędkość grawitacji drona
+  acc = createVector(0,0.55); //przyspieszenie grawitacyjne drona
+  opor = createVector(0, 0.5); //opór drona
   drone_size = 50; //wielkość drona
   flyKeyPressed = false; //sprawdza, czy przycisk jest naciśnięty (default=fałsz)
   flySound = new Audio("muzyka_dzwieki//wznoszenie.mp3"); // Ścieżka do pliku dźwiękowego wznoszenia
@@ -21,7 +21,7 @@ class Dron {
       this.pos.y = this.r / 2; //jeżeli tak, wyzeruj prędkość, przyspieszenie i zachowaj pozycję drona
     }
     this.acc.add(this.opor); //dodanie oporu do przyspieszenia
-    if (this.acc.y > 0.5) this.acc.y = 0.3; //nadanie limitu przyspieszeniu
+    if (this.acc.y > 0.6) this.acc.y = 0.2; //nadanie limitu przyspieszeniu
     this.vel.limit(8); //nadanie limitu prędkości
 
     if (this.flyKeyPressed) {
