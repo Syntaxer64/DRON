@@ -13,7 +13,8 @@ class KoniecGry {
         let timeElapsed = this.endTime - startTime; //czas, jaki minął od startu gry
         let minutes = Math.floor(timeElapsed / (1000 * 60)); //ile minut minęło od startu
         let seconds = Math.floor((timeElapsed % (1000 * 60)) / 1000); //ile sekund minęło od startu
-        let milliseconds = timeElapsed % 1000; //ile milisekund minęło od startu
+        let milliseconds = nf(timeElapsed % 1000, 3).slice(0, 3); // Pokazuje tylko pierwsze trzy cyfry milisekund
+
     
         fill(0); 
         textSize(24);
@@ -21,10 +22,10 @@ class KoniecGry {
         text("ROZBIŁEŚ SIĘ :(", width / 2, height / 2 - 80);
         text("Twój czas: " + 
           nf(minutes, 2) + ":" + 
-          nf(seconds, 2) + "." + 
+          nf(seconds, 2) + "," + 
           nf(milliseconds, 3), width / 2, height / 2 + 20); //tekst z czasem końcowym
     
         textSize(16);
-        text("Naciśnij przycisk, by spróbować ponownie", width / 2, height * 2/3); //informacja o restarcie gry
+        text("Naciśnij przycisk, by spróbować ponownie.", width / 2, height * 2/3); //informacja o restarcie gry
       }
     }
