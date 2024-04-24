@@ -40,7 +40,7 @@ function draw() {
     spawnCounterTop++;
     spawnCounterBottom++; //zwiększenie licznikó o 1
     if (spawnCounterTop >= spawnThresholdTop) { //jeżeli licznik dojdzie do progu
-      let obstacleheight = random(height / 4, height / 3); //wysokość przeszkody zawierająca się między 1/4 a 1/2 wysokości płótna
+      let obstacleheight = random(height / 4, height / 2.5); //wysokość przeszkody zawierająca się między 1/4 a 4/10 wysokości płótna
       topObstacles.push(new Przeszkoda(width, obstacleheight, true)); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na górze
       spawnCounterTop = 0; //wyzerowanie licznika
       spawnThresholdTop = random(minInterval, maxInterval); //wylosowanie nowego progu
@@ -54,7 +54,7 @@ function draw() {
     }
   
     if (spawnCounterBottom >= spawnThresholdBottom) { //jeżeli licznik dojdzie do progu
-      let obstacleheight = random(height / 4, height / 3); //wysokość przeszkody zawierająca się między 1/4 a 1/2 wysokości płótna
+      let obstacleheight = random(height / 4, height / 2.5); //wysokość przeszkody zawierająca się między 1/4 a 4/10 wysokości płótna
       bottomObstacles.push(new Przeszkoda(width, obstacleheight, false)); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na dole
       spawnCounterBottom = 0; //wyzerowanie licznika
       spawnThresholdBottom = random(minInterval, maxInterval); //wylosowanie nowego progu
