@@ -112,7 +112,7 @@ function drawTimer() { //funkcja rysująca licznik czasu
   let timeElapsed = millis() - startTime; //czas, jaki minął od startu gry
   let minutes = Math.floor(timeElapsed / (1000 * 60)); //ile minut minęło od startu
   let seconds = Math.floor((timeElapsed % (1000 * 60)) / 1000); //ile sekund minęło od startu
-  let milliseconds = timeElapsed % 1000; //ile milisekund minęło od startu
+  let milliseconds = nf(timeElapsed % 1000, 3).slice(0, 3); // Pokazuje tylko pierwsze trzy cyfry milisekund
 
   fill(255); //kolor tekstu (biały)
   textSize(24); //rozmiar tekstu
@@ -122,7 +122,7 @@ function drawTimer() { //funkcja rysująca licznik czasu
       nf(minutes, 2) +
       ":" +
       nf(seconds, 2) +
-      "." +
+      "," +
       nf(milliseconds, 3),
     width - 10, //współrzędna x tekstu
     10 //współrzędna y
