@@ -1,7 +1,7 @@
 let topObstacles = []; //lista przeszkód na górze
 let bottomObstacles = []; //lista przeszkód na dole
-let minInterval = 50; //minimalny interwał generowanie się przeszkód
-let maxInterval = 200; //maksymalny interwał generowania się przeszkód
+let minInterval = 30; //minimalny interwał generowanie się przeszkód
+let maxInterval = 150; //maksymalny interwał generowania się przeszkód
 let spawnCounterTop; //licznik czasowy do wygenerowania przeszkody na górze
 let spawnThresholdTop; //próg czasowy do wygenerowania przeszkody na górze
 let spawnCounterBottom; //to samo, ale na dole
