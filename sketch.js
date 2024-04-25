@@ -14,7 +14,7 @@ let tlo; //zmienna dla wygenerowania tła
 let backgroundImage; //zmienna, w której znajduje się tło
 let koniecGry; //zmienna dla wygenerowanie okna końca gry
 let endTime; //czas po zakończeniu gry
-let gap = 200; // 2*r*2 - dwukrotność wysokości drona - minimalna przerwa między przeszkodami
+let gap = 200; // 2*50*2 - dwukrotność wysokości drona - minimalna przerwa między przeszkodami (r=50)
 
 function preload() {
   backgroundImage=loadImage("Tla_bmp//las_ciemny.bmp"); //wczytanie tła z pliku
@@ -41,7 +41,7 @@ function draw() {
     spawnCounterTop++;
     spawnCounterBottom++; //zwiększenie licznikó o 1
     if (spawnCounterTop >= spawnThresholdTop) { //jeżeli licznik dojdzie do progu
-      let obstacleheight = random(height / 3.5, height / 2 - gap/4); //wysokość przeszkody zawierająca się między 35/100 a 4/10 wysokości płótna
+      let obstacleheight = random(height / 3.5, height / 2 - gap/4); //wysokość przeszkody [wys. minimalna, wys. maksymalna]. Wys maksymalna przeszkody uwzględnia ostateczną potrzebną przestrzeń do przelotu dronem między górną a dolną przeszkodą
       topObstacles.push(new Przeszkoda(width, obstacleheight, true)); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na górze
       spawnCounterTop = 0; //wyzerowanie licznika
       spawnThresholdTop = random(minInterval, maxInterval); //wylosowanie nowego progu
@@ -55,7 +55,7 @@ function draw() {
     }
   
     if (spawnCounterBottom >= spawnThresholdBottom) { //jeżeli licznik dojdzie do progu
-      let obstacleheight = random(height / 3.5, height / 2 - gap/4); //wysokość przeszkody zawierająca się między 35/100 a 4/10 wysokości płótna
+      let obstacleheight = random(height / 3.5, height / 2 - gap/4); //wysokość przeszkody [wys. minimalna, wys. maksymalna]. Wys maksymalna przeszkody uwzględnia ostateczną potrzebną przestrzeń do przelotu dronem między górną a dolną przeszkodą
       bottomObstacles.push(new Przeszkoda(width, obstacleheight, false)); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na dole
       spawnCounterBottom = 0; //wyzerowanie licznika
       spawnThresholdBottom = random(minInterval, maxInterval); //wylosowanie nowego progu
