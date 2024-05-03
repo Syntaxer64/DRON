@@ -2,9 +2,9 @@ class Dron {
   r = 40; //promień okręgu (drona)
   pos = createVector(width / 6, height / 2); //pozycja drona na płótnie (canvas)
   vel = createVector(0, 1.5); //prędkość grawitacji drona
-  acc = createVector(0,0.55); //przyspieszenie grawitacyjne drona
+  acc = createVector(0, 0.55); //przyspieszenie grawitacyjne drona
   opor = createVector(0, 0.5); //opór drona
-  drone_size = 50; //wielkość drona
+  collision_size = 30; //wielkość drona
   flyKeyPressed = false; //sprawdza, czy przycisk jest naciśnięty (default=fałsz)
   flySound = new Audio("muzyka_dzwieki//wznoszenie.mp3"); // Ścieżka do pliku dźwiękowego wznoszenia
   fallSound = new Audio("muzyka_dzwieki//opadanie.mp3"); // Ścieżka do pliku dźwiękoweg
@@ -65,10 +65,10 @@ class Dron {
 
   droneCollision(topObstacles, bottomObstacles) {
     //funkcja sprawdzająca kolizję drona z przeszkodami
-    let droneLeft = this.pos.x - this.drone_size / 2;
-    let droneRight = this.pos.x + this.drone_size / 2;
-    let droneTop = this.pos.y - this.drone_size / 2;
-    let droneBottom = this.pos.y + this.drone_size / 2; //zmienne sprawdzające granicę lewą, prawą, górną i dolną drona
+    let droneLeft = this.pos.x - this.collision_size / 2;
+    let droneRight = this.pos.x + this.collision_size / 2;
+    let droneTop = this.pos.y - this.collision_size / 2;
+    let droneBottom = this.pos.y + this.collision_size / 2; //zmienne sprawdzające granicę lewą, prawą, górną i dolną drona
 
     for (let i = 0; i < topObstacles.length; i++) {
       //dla każdej przeszkody z listy topObstacles
@@ -115,11 +115,32 @@ class Dron {
 
   obstacleCollision(obstacle, droneLeft, droneRight, droneTop, droneBottom) {
     //funkcja sprawdzająca czy przeszkoda skolidowała z dronem
-    let obstacleLeft = obstacle.obs_x; //granica lewa przeszkody
-    let obstacleRight = obstacle.obs_x + obstacle.obs_width; //granica prawa przeszkody
+    let obstacleLeft = obstacle.isTop ? obstacle.top_obs_x : obstacle.bottom_obs_x; //granica lewa przeszkody
+    let obstacleRight = obstacle.isTop
+      ? obstacle.top_obs_x + obstacle.top_obs_width
+      : obstacle.bottom_obs_x + obstacle.bottom_obs_width; //granica prawa przeszkody
     let obstacleTop = obstacle.isTop ? 0 : height - obstacle.obs_height; //granica górna (jeżeli isTop = true, to 0, a jeżeli nie to height-obstacle.obs_height
-    let obstacleBottom = obstacle.isTop ? obstacle.obs_height : height; //granica dolna (jeżeli isTop = true, to obstacle.obs_height, a jeżeli nie to height
+    let obstacleBottom = obstacle.isTop ? 100 : height; //granica dolna (jeżeli isTop = true, to obstacle.obs_height, a jeżeli nie to height
+    let thunderLeft = obstacle.isTop ? obstacle.top_obs_x + obstacle.thunder_left : 0;
+    let thunderRight = obstacle.isTop ? obstacle.top_obs_x + obstacle.thunder_left + obstacle.thunder_width : 0;
+    let thunderBottom = obstacle.isTop ? obstacle.thunder_height : 0;
 
+    if (obstacle.isTop) {
+      if (droneRight > obstacleLeft && //jeżeli prawa granica drona jest po prawej od lewej granicy przeszkody
+      droneLeft < obstacleRight && //lewa granica drona na lewo od prawej granicy przeszkody
+      droneBottom > obstacleTop && //dolna granica drona niżej niż górna granica przeszkody
+      droneTop < obstacleBottom) {  //górna granica drona wyżej niż dolna granica przeszkody
+        return true;
+      }
+      else if 
+      (droneRight > thunderLeft &&
+      droneLeft < thunderRight &&
+      droneTop < thunderBottom) {
+        return true;
+      }
+      return false;
+    }
+    else {
     if (
       droneRight > obstacleLeft && //jeżeli prawa granica drona jest po prawej od lewej granicy przeszkody
       droneLeft < obstacleRight && //lewa granica drona na lewo od prawej granicy przeszkody
@@ -130,8 +151,10 @@ class Dron {
     }
     return false; //dron dalej leci i zwróć false
   }
+  }
 
-  collideWithGround() { //funkcja sprawdzająca kolizję drona z ziemią
+  collideWithGround() {
+    //funkcja sprawdzająca kolizję drona z ziemią
     if (this.pos.y > height - this.r / 2) {
       this.fallSound.pause(); //wyłącz dźwięk spadania
       this.flySound.pause(); //wyłącz dźwięk opadania
