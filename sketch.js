@@ -11,13 +11,26 @@ let crash = false; //zmienna sprawdzająca, czy dron się rozbił
 let startTime; //czas rozpoczęcia gry
 let gameStart = false; //zmienna sprawdzająca, czy gra się rozpoczęła
 let tlo; //zmienna dla wygenerowania tła
-let backgroundImage; //zmienna, w której znajduje się tło
+let backgroundImage1; //zmienna, w której znajduje się tło 1
+let backgroundTransition1; //zmienna, w której znajduje się przejście 1
+let backgroundImage2; //zmienna, w której znajduje się tło 2
+let backgroundTransition2; //zmienna, w której znajduje się przejście 2
+let backgroundImage3; //zmienna, w której znajduje się tło 3
+let backgroundTransition3; //zmienna, w której znajduje się przejście 3
+let backgroundImage4; //zmienna, w której znajduje się tło 4
 let koniecGry; //zmienna dla wygenerowanie okna końca gry
 let endTime; //czas po zakończeniu gry
+let bestTime; //zmienna z najlepszym czasem
 let gap = 200; // 2*50*2 - dwukrotność wysokości drona - minimalna przerwa między przeszkodami (r=50)
 
 function preload() {
-  backgroundImage = loadImage("Tla_bmp//las_ciemny.bmp"); //wczytanie tła z pliku
+  backgroundImage1 = loadImage("Tla_bmp//pole.bmp"); //wczytanie teł z pliku
+  backgroundTransition1 = loadImage("Tla_bmp//pole-las.bmp");
+  backgroundImage2 = loadImage("Tla_bmp//Las_jasny.bmp");
+  backgroundTransition2 = loadImage("Tla_bmp//Las_jasny-ciemny.bmp");
+  backgroundImage3 = loadImage("Tla_bmp//Las_ciemny.bmp");
+  backgroundTransition3 = loadImage("Tla_bmp//Las_ciemny-miasto.bmp");
+  backgroundImage4 = loadImage("Tla_bmp//Miasto.bmp");
 }
 
 function setup() {
@@ -27,23 +40,40 @@ function setup() {
   spawnThresholdTop = random(minInterval, maxInterval); //wylosowanie progu górnego
   spawnCounterBottom = 0; //wygenerowanie licznika dolnego
   spawnThresholdBottom = random(minInterval, maxInterval); //wylosowanie progu dolnego
-  tlo = new Tlo(backgroundImage);
+  tlo = new Tlo(
+    [
+      backgroundImage1,
+      backgroundTransition1,
+      backgroundImage2,
+      backgroundTransition2,
+      backgroundImage3,
+      backgroundTransition3,
+      backgroundImage4,
+    ],
+    startTime
+  ); //stworzenie nowego tła z listą wszystkich teł oraz czasem startu
+  let cookieTime = getCookie("bestTime"); //wczytanie ciasteczka z najlepszym czasem
+  if (cookieTime !== "") { //jeżeli ciasteczko nie jest puste
+    bestTime = parseInt(cookieTime); //wczytaj ciasteczko do zmiennej bestTime
+  } else {
+    bestTime = Infinity; //w innym wypadku bestTime będzie tymczasowo nieskończonością
+  }
 }
 
 function draw() {
-  tlo.update();
   tlo.draw(); //narysowanie tła
   dron.draw(); //narysowanie drona
-  if (gameStart) {
-    dron.update();
+  if (gameStart) { //jeżeli gra się rozpoczeła
+    tlo.update(); //aktualizuj tło
+    dron.update(); //aktualizuj dron
     collision(); //funkcja od kolizji
 
     spawnCounterTop++;
-    spawnCounterBottom++; //zwiększenie licznikó o 1
+    spawnCounterBottom++; //zwiększenie liczników o 1
     if (spawnCounterTop >= spawnThresholdTop) {
       //jeżeli licznik dojdzie do progu
       //let obstacleheight = random(height / 3.5, height / 2 - gap / 4); //wysokość przeszkody [wys. minimalna, wys. maksymalna]. Wys maksymalna przeszkody uwzględnia ostateczną potrzebną przestrzeń do przelotu dronem między górną a dolną przeszkodą
-      topObstacles.push(new Przeszkoda(width, 100, true)); //stworzenie przeszkody o x równym szerokości płótna, wysokości 100 (dla chmur taka sama) i warunku, mówiącym, że przeszkoda znajduje się na górze
+      topObstacles.push(new Przeszkoda(width, 100, true, startTime)); //stworzenie przeszkody o x równym szerokości płótna, wysokości 100 (dla chmur taka sama) i warunku, mówiącym, że przeszkoda znajduje się na górze
       spawnCounterTop = 0; //wyzerowanie licznika
       spawnThresholdTop = random(minInterval, maxInterval); //wylosowanie nowego progu
     }
@@ -60,7 +90,9 @@ function draw() {
     if (spawnCounterBottom >= spawnThresholdBottom) {
       //jeżeli licznik dojdzie do progu
       let obstacleheight = random(height / 3.5, height / 2 - gap / 4); //wysokość przeszkody [wys. minimalna, wys. maksymalna]. Wys maksymalna przeszkody uwzględnia ostateczną potrzebną przestrzeń do przelotu dronem między górną a dolną przeszkodą
-      bottomObstacles.push(new Przeszkoda(width, obstacleheight, false)); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na dole
+      bottomObstacles.push(
+        new Przeszkoda(width, obstacleheight, false, startTime)
+      ); //stworzenie przeszkody o x równym szerokości płótna, wysokości ustalonej wyżej i warunku, mówiącym, że przeszkoda znajduje się na dole
       spawnCounterBottom = 0; //wyzerowanie licznika
       spawnThresholdBottom = random(minInterval, maxInterval); //wylosowanie nowego progu
     }
@@ -78,7 +110,8 @@ function draw() {
       noLoop(); //jeżeli dron się rozbije, przerwij grę
       dron.startSound.pause(); //przerwij muzykę
       endTime = millis(); //sprawdź czas podczas rozbicia
-      koniecGry = new KoniecGry(endTime); //stwórz okno końca gry z czasem rozbicia
+      updateBestTime(); //zaktualizuj najlepszy czas
+      koniecGry = new KoniecGry(endTime, bestTime); //stwórz okno końca gry z czasem rozbicia i najlepszym czasem
       koniecGry.draw(); //narysuj okno końca gry
     }
   }
@@ -94,6 +127,18 @@ function keyPressed() {
     spawnThresholdTop = random(minInterval, maxInterval); //stwórz nowe progi
     spawnCounterBottom = 0; //wyzeruj liczniki
     spawnThresholdBottom = random(minInterval, maxInterval); //stwórz nowe progi
+    tlo = new Tlo(
+      [
+        backgroundImage1,
+        backgroundTransition1,
+        backgroundImage2,
+        backgroundTransition2,
+        backgroundImage3,
+        backgroundTransition3,
+        backgroundImage4,
+      ],
+      startTime
+    ); //zresetuj tło
     dron = new Dron(); //stwórz nowy obiekt dron
     crash = false; //ustaw stan rozbicia się drona na false
     gameStart = false; //ustaw stan rozpoczęcia gry na false
@@ -103,6 +148,18 @@ function keyPressed() {
       //jeżeli gra się jeszcze nie rozpoczęła
       gameStart = true; //ustaw zmienną gameStart na true
       startTime = millis(); //ustaw czas startowy
+      tlo = new Tlo(
+        [
+          backgroundImage1,
+          backgroundTransition1,
+          backgroundImage2,
+          backgroundTransition2,
+          backgroundImage3,
+          backgroundTransition3,
+          backgroundImage4,
+        ],
+        startTime
+      ); //zresetuj ponownie tło, z nowym czasem rozpoczęcia gry
     }
     dron.fly(); //funkcja lotu drona
   }
@@ -145,4 +202,44 @@ function drawTimer() {
     width - 10, //współrzędna x tekstu
     10 //współrzędna y
   );
+}
+
+function updateBestTime() {
+  //funkcja zmieniająca najlepszy czas
+  if (endTime - startTime > bestTime) {
+    // jeżeli czas jaki do czasu rozbicia minus czas od startu gry jest większy od najlepszego czasu
+    bestTime = endTime - startTime; //ustaw najlepszy czas jako powyższą różnicę
+    setCookie("bestTime", bestTime, 365); //stwórz nowe ciasteczko przechowujące ten najlepszy czas
+  }
+}
+
+function setCookie(name, value, days) {
+  //funkcja tworząca nowe ciasteczko
+  let expires = ""; //zmienna z datą ważności ciasteczka
+  if (days) {
+    //jeżeli days jest poprawną wartością
+    let date = new Date(); //stwórz nowy obiekt Date
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000); //ustaw datę na datę dzisiejszą plus 365 dni (w milisekundach)
+    expires = "; expires=" + date.toUTCString(); //string, w którym znajduje się data ważności ciasteczka
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/"; // stworzenie ciesteczka z jego nazwą, wartością oraz datą ważności
+}
+
+function getCookie(name) {
+  //funkcja szukające istniejące ciasteczko
+  let searchName = name + "="; //nazwa, po której ciasteczko będzie wyszukiwane
+  let cookieList = document.cookie.split(";"); //lista wszystkich ciasteczek rozdzielona średnikami
+  for (let i = 0; i < cookieList.length; i++) {
+    //dla każdego ciastka w liście
+    let cookieName = cookieList[i]; //sprawdź nazwę ciasteczka
+    while (cookieName.charAt(0) == " ") {
+      //jeżeli pierwszy znak to spacja
+      cookieName = cookieName.substring(1, cookieName.length); //usuń spację przed nazwą
+    }
+    if (cookieName.indexOf(searchName) == 0) {
+      //jeżeli nazwa szukanego ciasteczka zaczyna się w indeksie 0 nazwy sprawdzanego ciasteczka
+      return cookieName.substring(searchName.length, cookieName.length); //zwróć nazwę ciasteczka bez jego nazwy
+    }
+  }
+  return ""; //jeżeli ciasteczko nie zostało znalezione, zwróć pusty string
 }
