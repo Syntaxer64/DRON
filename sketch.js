@@ -53,7 +53,8 @@ function setup() {
     startTime
   ); //stworzenie nowego tła z listą wszystkich teł oraz czasem startu
   let cookieTime = getCookie("bestTime"); //wczytanie ciasteczka z najlepszym czasem
-  if (cookieTime !== "") { //jeżeli ciasteczko nie jest puste
+  if (cookieTime !== "") {
+    //jeżeli ciasteczko nie jest puste
     bestTime = parseInt(cookieTime); //wczytaj ciasteczko do zmiennej bestTime
   } else {
     bestTime = Infinity; //w innym wypadku bestTime będzie tymczasowo nieskończonością
@@ -63,7 +64,8 @@ function setup() {
 function draw() {
   tlo.draw(); //narysowanie tła
   dron.draw(); //narysowanie drona
-  if (gameStart) { //jeżeli gra się rozpoczeła
+  if (gameStart) {
+    //jeżeli gra się rozpoczeła
     tlo.update(); //aktualizuj tło
     dron.update(); //aktualizuj dron
     collision(); //funkcja od kolizji
@@ -114,6 +116,15 @@ function draw() {
       koniecGry = new KoniecGry(endTime, bestTime); //stwórz okno końca gry z czasem rozbicia i najlepszym czasem
       koniecGry.draw(); //narysuj okno końca gry
     }
+  } else {
+    textSize(24);
+    textAlign(CENTER, CENTER);
+    fill(0);
+    text(
+      "Przytrzymaj dowolny przycisk, by wzlecieć!",
+      width / 2,
+      height / 2 - 300
+    );
   }
 }
 

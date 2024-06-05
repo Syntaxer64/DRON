@@ -1,0 +1,19 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  border: 2px solid black;
+}
+
+body {
+  background-image: url(tlo_okna\\tlo.png);
+  background-repeat: repeat;
+  background-size: 200px 150px;
+  background-position: -30px -30px;
+}

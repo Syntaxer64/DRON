@@ -10,7 +10,13 @@ class Dron {
   fallSound = new Audio("muzyka_dzwieki//opadanie.mp3"); // Ścieżka do pliku dźwiękoweg
   explosionSound = new Audio("muzyka_dzwieki//wybuch.mp3"); // Dodanie dźwięku wybuchu
   startSound = new Audio("muzyka_dzwieki//start.mp3"); // Dodanie dźwięku startu
-  dronImage=loadImage("Dron_grafika//DRON1.png") //obraz drona
+  dronImages = [
+    loadImage("Dron_grafika_nowy//DRON10.png"),
+    loadImage("Dron_grafika_nowy//DRON11.png"),
+  ]; //klatki drona
+  currentFrame = 0;
+  frameTimer = 0;
+  frameInterval = 30;
 
   update = function () {
     this.pos.add(this.vel); //dodanie prędkości do pozycji
@@ -44,14 +50,22 @@ class Dron {
       this.flySound.pause();
       this.flySound.currentTime = 0;
     }
+
+    this.frameTimer += deltaTime;
+      if (this.frameTimer >= this.frameInterval) {
+        this.currentFrame = (this.currentFrame + 1) % this.dronImages.length;
+        this.frameTimer = 0;
+      }
   };
 
   draw = function () {
-    //rysowanie drona
-    //stroke(0, 0);
-    //fill(113, 215, 217);
-    //ellipse(this.pos.x, this.pos.y, this.r);
-    image(this.dronImage,this.pos.x - this.r, this.pos.y - this.r + 20,80,50); //rysowanie drona
+    image(
+      this.dronImages[this.currentFrame],
+      this.pos.x - this.r,
+      this.pos.y - this.r + 20,
+      80,
+      50
+    ); //rysowanie drona
   };
 
   fly = function () {
@@ -132,9 +146,10 @@ class Dron {
       ? obstacle.top_obs_x + obstacle.thunder_left + obstacle.thunder_width
       : 0; //granica prawa pioruna (dla dolnych przeszkód nie istnieje)
     let thunderBottom = obstacle.isTop ? obstacle.thunder_height : 0; //granica dolna pioruna (dla dolnych przeszkód nie istnieje)
-      //granica górna nie potrzebna, ze względu na chmury
+    //granica górna nie potrzebna, ze względu na chmury
 
-    if (obstacle.isTop) { //jeżeli przeszkoda jest na górze
+    if (obstacle.isTop) {
+      //jeżeli przeszkoda jest na górze
       if (
         droneRight > obstacleLeft && //jeżeli prawa granica drona jest po prawej od lewej granicy przeszkody
         droneLeft < obstacleRight && //lewa granica drona na lewo od prawej granicy przeszkody
@@ -142,7 +157,8 @@ class Dron {
         droneTop < obstacleBottom //górna granica drona wyżej niż dolna granica przeszkody
       ) {
         return true;
-      } else if ( //taki sam przypadek, ale dla piorunów
+      } else if (
+        //taki sam przypadek, ale dla piorunów
         droneRight > thunderLeft &&
         droneLeft < thunderRight &&
         droneTop < thunderBottom
@@ -150,7 +166,8 @@ class Dron {
         return true;
       }
       return false;
-    } else { //jeżeli jest na dole
+    } else {
+      //jeżeli jest na dole
       if (
         droneRight > obstacleLeft && //jeżeli prawa granica drona jest po prawej od lewej granicy przeszkody
         droneLeft < obstacleRight && //lewa granica drona na lewo od prawej granicy przeszkody
