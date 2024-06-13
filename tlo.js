@@ -28,7 +28,6 @@ class Tlo {
     if (this.currentBackground==1 || this.currentBackground==3 || this.currentBackground==5) { //jeżeli indeks tła = 1, 3 lub 5 (tła przejściowe)
       image(this.images[this.currentBackground], this.x, 0, width, height); //rysuj tło z tym indeksem
       if (this.x2 < 0) { //jeżeli lewy bok drugiego tła dotknie lewgo boku ekranu gry
-        console.log(this.x2);
         image(this.images[this.currentBackground-1], this.x2, 0, width, height); //kontynuuj rysowanie tego (poprzedniego) tła
       }
       else { //jeżeli nie

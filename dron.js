@@ -20,7 +20,7 @@ class Dron {
 
   update = function () {
     this.pos.add(this.vel); //dodanie prędkości do pozycji
-    this.vel.add(this.acc); //dodanie przyspieszenia do pozycji
+    this.vel.add(this.acc); //dodanie przyspieszenia do prędkości
     if (this.pos.y - this.r / 2 < 0) {
       //warunek sprawdzający czy dron dotyka sufitu
       this.vel.y = 0;
